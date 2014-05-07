@@ -1,0 +1,441 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass llncs
+\begin_preamble
+
+%\documentclass[a4paper,10pt]{scrartcl}
+
+
+
+
+\title{Memory-Based Reasoning for Artificial Intelligence in Computer Games \\ {\small CS6250 - Course Project Proposal} }
+\author{\it Sahitya Potluri, Vignesh Krishnakumar, Abhiram Ravi}
+\institute{Indian Institute of Technology, Madras}
+
+
+\pdfinfo{%
+  /Title    ()
+  /Author   ()
+  /Creator  ()
+  /Producer ()
+  /Subject  ()
+  /Keywords ()
+}
+\end_preamble
+\use_default_options false
+\maintain_unincluded_children false
+\language english
+\language_package none
+\inputencoding utf8
+\fontencoding default
+\font_roman palatino
+\font_sans cmss
+\font_typewriter lmtt
+\font_default_family sfdefault
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize 12
+\spacing single
+\use_hyperref false
+\papersize a4paper
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 0
+\use_mathdots 0
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date true
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 3cm
+\topmargin 3.5cm
+\rightmargin 3cm
+\bottommargin 3.5cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Memory Based Reasoning in Artificial Intelligence for Racing Cars
+\end_layout
+
+\begin_layout Abstract
+Computer games have been a playground for academicians in the experimentation
+ of several Artificial Intelligence techniques.
+ Game Bots (a.k.a Game AI) borrow several techniques from the broader field
+ of AI and Machine Learning in bringing human-level cognitive processes
+ to the non-player characters/bots in the game, providing a strong platform
+ for the simulation of AI techniques that are applicable to the real world.
+ In this course, we experiment with the application of Case-based reasoning
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+ and Fuzzy logic controllers 
+\end_layout
+
+\end_inset
+
+ in the building of an AI-driven car for the Open Source Car-Racing game
+ 
+\shape italic
+Speed-dreams
+\shape default
+(a.k.a TORCS).
+ TORCS is a famous open source racing game project, which has been used
+ extensively by academicians for game AI research.
+ 
+\end_layout
+
+\begin_layout Section*
+Introduction
+\end_layout
+
+\begin_layout Standard
+Virtual Gaming Environments are killer apps for the application of Human-level
+ Artificial Intelligence.
+ Although AI techniques have been applied to games such as Chess, Checkers
+ etc., the traditional techniques fail in the domain of more complicated
+ games such as Multiplayer Role-playing games or real time strategy games
+ because the decision space is too vast for making decisions in real-time.
+ Traditional Machine learning techniques, where we predict an action based
+ on the state, also fail to perform, since we would require a dataset that
+ is exponential in the number of elements that describe a state in the game.
+ This introduces the need for an efficient memory model and additional reasoning
+ to adapt previously seen instances to a newly encountered scene.
+ We tackle the situation of a Racing-car scenario, where we would like an
+ AI to learn to drive by observing other expert cars play.
+ In our approach, the AI builds a case base by observing the actions of
+ an expert racer and uses this case base to decide actions given a new scenario.
+ The rest of this paper is organized as follows - We first present a detailed
+ outline of our approach.
+ We then present the details of implementation on the Speed-dreams simulator.
+ We then evaluate the performance of our approach by running our AI car
+ on an 
+\emph on
+unseen
+\emph default
+ racing track.
+\end_layout
+
+\begin_layout Section*
+Case Based Reasoning for Racing Cars
+\end_layout
+
+\begin_layout Standard
+The goal of our approach is to build an AI racing car that learns to play
+ by studying the actions of expert racers on various scenarios.
+ By exploiting the paradigm of case-based reasoning, our AI learns to conquer
+ the road with the following three steps 
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+Case Base Construction
+\series default
+ - We first let expert racers run on a variety of different racing tracks,
+ and log information regarding the actions taken by these experts for different
+ state parameters.
+ The problem attributes include some crucial parameters involving the internal
+ and external states of the car along with parameters of the portion of
+ the track local to the position of the car.
+ The lesson attributes include the control parameters of the car i.e the
+ decisions takes by the expert racer during the corresponding problem scenario.
+ This is done by running a single expert car (denote 
+\series bold
+E
+\series default
+) on a variety of training tracks (denote 
+\series bold
+TT
+\series default
+).
+ For reasons of simplicity, we work with a single car model 
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /home/abhiram/Documents/academics/8/CS6250 - Memory Based Reasoning in AI/project/FCHART.png
+	width 70page%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+An overview of the case base, with the comprehensive list of attributes
+ (both problem and lesson)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+Similarity Computation
+\series default
+ - Since we would like to run our AI car on a previously unseen track, we
+ would like to approximate the newly encountered situation to seen data
+ from the case base, and obtain the 
+\emph on
+nearest
+\emph default
+ neighbors, before adapting it to make our decision.
+ Computing the nearest neighbors requires the description of a similarity
+ measure between two problems.
+ We experiment with several local and global similarity measures including
+ the default one provided by the myCBR framework.
+ The global similarity measure is a weighted average of all the local similarity
+ measures between the individual attributes.
+ The weights that we used were inferred from the importance of the physical
+ interpretation of the attributes in making the control decisions of the
+ car\SpecialChar \@.
+
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+Solution Adaptation
+\series default
+ - It is not practically feasible to directly use the solution of the nearest
+ neighbor of the problem in the case base, as the situation may be semantically
+ different, although the closest neighbor by definition.
+ We can improve the performance of our AI car by adapting the solution of
+ the nearest matches using one of several adaptation techniques.
+ In this light, we build and train a neural network using the top thirty
+ nearest neighbors of the query problem, and use the solution provided by
+ the neural network to make our final decision.
+\end_layout
+
+\begin_layout Section*
+Implementation & Evaluation
+\end_layout
+
+\begin_layout Subsection*
+Speed-Dreams
+\end_layout
+
+\begin_layout Standard
+Speed-dreams is an open-source 3D Racing Car Simulator, a fork of the TORCS
+ project with improved physics and car models/tracks.
+ We hack this simulator to log data, and also to build our AI bot that plays
+ the game.
+ The game source provides a separate module to implement custom AI game
+ bots, and documents the necessary interface functions that need to be implement
+ed for the integration of a custom bot into the game.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename speed-dreams.png
+	width 50col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+A screenshot of the speed-dreams racing car simulator
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Our implementation process is multi fold.
+ In order to build our case base, we first modify the source of an existing
+ AI bot to log the corresponding game state and control attributes.
+ We then let the AI bot play over various different racing tracks, and dump
+ all the required information into a 
+\emph on
+csv
+\emph default
+.
+ Once the information has been logged, we use myCBR to import the 
+\emph on
+csv
+\emph default
+ and build the case base.
+ We experiment with similarity measures using the same software.
+ For adaptation, we query for the nearest neighbors using the API provided
+ by myCBR, and implement the neural network using the OpenCV Machine Learning
+ Module.
+ 
+\end_layout
+
+\begin_layout Standard
+To put it all together, after setting up the above, we build an AI bot that
+ records the game state parameters at every instant, queries the constructed
+ case base using the myCBR API to obtain the nearest neighbors, trains a
+ neural network using these neighbors, and then obtains the final decision
+ to make for the given game state by feeding it into this neural network.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename /home/abhiram/Documents/academics/8/CS6250 - Memory Based Reasoning in AI/project/fchart1.png
+	width 50col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Flow Diagram
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+Discussion
+\end_layout
+
+\begin_layout Standard
+Note that we don't learn across cars, but only across tracks.
+ A major assumption we made is that there are no opponents on the track.
+ A possible extension of the case base is to include relevant information
+ about neighboring cars (eg.
+ distance to nearest car etc.) to make more informed decisions.
+ We assume that the tracks are of the same category, but different geometric
+ structure only i.e we learn across different tracks of the same type 
+\emph on
+road
+\emph default
+ as opposed to learning on a road track, and playing on a 
+\emph on
+dirt
+\emph default
+ track.
+ We spent a significant amount of time in analyzing the influence of various
+ parameters that the AI car had access to, involving those of the car and
+ the track.
+ The attributes in the problem space of the case base are those obtained
+ after pruning the insignificant parameters.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+To include to to not include control parameters in the problem 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Conclusion
+\end_layout
+
+\begin_layout Standard
+In this exercise, we experiment with the application of Case-based reasoning
+ in cruise control for AI Racing cars.
+\end_layout
+
+\end_body
+\end_document
