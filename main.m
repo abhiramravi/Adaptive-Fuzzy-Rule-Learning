@@ -33,10 +33,12 @@ for i = 1:(n - 2*n/3)
 end
 
 rules
-
+%ezplot('x.^3 - 9*x.^2 + 23*x - 15', [xmin, xmax]);
 %plot results
 fplot(@(x) pchip([0 4 5 6 10], [0.5 1 6 1 0.5], x), [0,10], 'g');
-%ezplot('x.^2', [0, 10]);
+%ezplot('x.^2', [0, 10]); 
+title('')
+
 hold on;
 plot(test_x, preds, 'r.');
 centroids

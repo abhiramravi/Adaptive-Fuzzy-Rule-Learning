@@ -1,7 +1,7 @@
 % We first generate the data points
 %no of splits
 clearvars;
-k = 12;
+k = 7;
 
 %no of points
 n = 1000;
@@ -16,7 +16,7 @@ ymin = 0
 ymax = 6
 
 % We first generate the training data
-[train_x, train_y, test_x, test_y] = gen_spline_data(xmin, xmax, n);
+[train_x, train_y, test_x, test_y] = gen_two_spline_data(xmin, xmax, n);
 
 % We perform kmeans on the training data to get N centers. 
 [IDX, T, D] = kmeans (train_x, k);
@@ -45,7 +45,7 @@ d = size(train_y);
 error = 100 * ones(1,d(2));
 
 % Now for a number of iterations we perform the update
-while sum (error) > 5
+while sum (error) > 11
     
     % First we calculate the errors ej(n) on the training data
     d = size(train_y);
@@ -111,9 +111,9 @@ for i =1:d(2)
     test_answers(i) = w' * normpdf(test_x(i), T, 1./sqrt(2*C)); 
 end
 %%
-
 %ezplot('x.^2', [xmin, xmax]);
-fplot(@(x) pchip([0 4 5 6 10], [0.5 1 6 1 0.5], x), [0,10], 'g');
+g = @(x) pchip([0 2 3 4 5 6 7 8 10], [0.5 1 6 1 0.7 1 6 1 0.5], x);
+fplot(g, [0,10], 'g');
 
 %ezplot('x.^3 - 9*x.^2 + 23*x - 15', [xmin, xmax]);
 hold on;
@@ -123,7 +123,7 @@ hold on;
 % sigma=5;
 sigma = 1./sqrt(2*C);
 for i=1:k
-    pdf = @(x) exp(( -(x-T(i)).^2)./(2*sigma(i)^2) );%./(sqrt(2*pi*sigma(i)^2)); % * w(i)
+    pdf = @(x)  exp(( -(x-T(i)).^2)./(2*sigma(i)^2) );%./(sqrt(2*pi*sigma(i)^2)); % * w(i)
     ezplot( pdf, [T(i) - 4*sigma(i), T(i) + 4*sigma(i)] );
     hold on;
 end

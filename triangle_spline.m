@@ -1,7 +1,7 @@
 % We first generate the data points
 %no of splits
 clearvars;
-k = 12;
+k = 10;
 
 %no of points
 n = 1000;
@@ -13,10 +13,10 @@ lambda = 0.3;
 xmin = 0
 xmax = 10
 ymin = 0
-ymax = 6
+ymax = 100
 
 % We first generate the training data
-[train_x, train_y, test_x, test_y] = gen_spline_data(xmin, xmax, n);
+[train_x, train_y, test_x, test_y] = gen_data(xmin, xmax, n, 1);
 
 % We perform kmeans on the training data to get N centers. 
 [IDX, T, D] = kmeans (train_x, k);

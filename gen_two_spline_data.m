@@ -1,4 +1,4 @@
-function [train_x, train_y, test_x, test_y] = gen_spline_data(a, b, numpts)
+function [train_x, train_y, test_x, test_y] = gen_two_spline_data(a, b, numpts)
     
     train_pts = numpts*2 / 3;
     test_pts = numpts - train_pts;
@@ -8,7 +8,7 @@ function [train_x, train_y, test_x, test_y] = gen_spline_data(a, b, numpts)
     test_x = 1:test_pts;
     test_y = 1:test_pts;
     
-    g = @(x) pchip([0 4 5 6 10], [0.5 1 6 1 0.5], x);
+    g = @(x) pchip([0 2 3 4 5 6 7 8 10], [0.5 1 6 1 0.7 1 6 1 0.5], x);
     
     for i = 1:train_pts
         train_x(i) = unifrnd(a, b);
@@ -20,6 +20,6 @@ function [train_x, train_y, test_x, test_y] = gen_spline_data(a, b, numpts)
         test_y(i) = g(test_x(i));
     end
     
-    fplot (g, [0,10], 'g')    
+     fplot (g, [0,10], 'g')    
     
 end
